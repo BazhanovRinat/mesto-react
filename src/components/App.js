@@ -1,17 +1,16 @@
-import '../index.css';
-import Header from '../components/Header.js';
-import Main from "../components/Main.js";
-import Footer from "../components/Footer.js"
-import PopupWithForm from "../components/PopupWithForm.js"
-import ImagePopup from "../components/ImagePopup.js"
+import Header from './Header.js';
+import Main from "./Main.js";
+import Footer from "./Footer.js"
+import PopupWithForm from "./PopupWithForm.js"
+import ImagePopup from "./ImagePopup.js"
 import React, { useState } from 'react';
 
 function App() {
 
-  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false)
-  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false)
-  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false)
-  const [selectedCard, setSelectedCard] = React.useState(false)
+  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false)
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false)
+  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false)
+  const [selectedCard, setSelectedCard] = useState(null)
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen)
@@ -36,7 +35,7 @@ function App() {
     setIsEditAvatarPopupOpen(false)
     setIsEditProfilePopupOpen(false)
     setIsAddPlacePopupOpen(false)
-    setSelectedCard(false)
+    setSelectedCard(null)
   }
 
   return (
@@ -83,7 +82,7 @@ function App() {
         <span className="popup-avatar__input-error popup__input-error"></span>
       </PopupWithForm>
 
-      <ImagePopup card={selectedCard} onClose={closeAllPopups}/>
+      <ImagePopup card={selectedCard} onClose={closeAllPopups} />
 
 
 
