@@ -25,6 +25,16 @@ export default class Api {
         })
             .then(res => this._checkResponse(res))
     }
+
+    changeLikeCardStatus(cardId, isCardLike) {
+        if (isCardLike) {
+            return this.cardLike(cardId)
+        }
+        else {
+            return this.cardLikeRemove(cardId)
+        }
+    }
+
     cardLike(cardId) {
         return fetch(`${this.url}/cards/${cardId}/likes`, {
             method: "PUT",
@@ -80,7 +90,7 @@ export default class Api {
 
 }
 
- export const api = new Api({
+export const api = new Api({
     url: 'https://mesto.nomoreparties.co/v1/cohort-63/',
     headers: {
         authorization: '52af015b-cc8d-4640-80fa-207f5ac44ed7',
