@@ -9,7 +9,7 @@ function PopupWithForm({ isOpen, onClose, name, title, onSubmit, children, isLoa
             <div className={`popup__container popup-${name}__container`}>
                 <button type="button" className="popup__close popup-edit__close" onClick={() => onClose()}></button>
                 <h2 className={`popup__title popup${titleName}__title`}>{title}</h2>
-                <form className={`popup__form popup-${name}__form`} onSubmit={onSubmit} noValidate>
+                <form className={`popup__form popup-${name}__form`} onSubmit={onSubmit}>
                     <fieldset className="popup__item"
                     >
                         {children}
