@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PopupWithForm from "./PopupWithForm.js"
 
-function EditAvatarPopup(props) {
+function EditAvatarPopup({isOpen, onClose, isLoading}) {
 
     const avatarRef = useRef();
 
@@ -13,7 +13,8 @@ function EditAvatarPopup(props) {
     }
 
     return (
-        <PopupWithForm name="avatar" title="Обновить аватар" submitTitle={"Сохранить"} isOpen={props.isOpen} onClose={props.onClose} onSubmit={handleSubmit}
+        <PopupWithForm name="avatar" title="Обновить аватар" submitTitle={"Сохранить"} isOpen={isOpen} onClose={onClose} 
+        onSubmit={handleSubmit} isLoading={isLoading}
         >
             <input id="popup-avatar__input" className="popup__input popup__input_new-avatar" name="avatar" ref={avatarRef}
                 type="url" placeholder="Название" required />

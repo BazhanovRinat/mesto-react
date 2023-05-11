@@ -4,6 +4,10 @@ export default class Api {
         this.headers = data.headers;
     }
 
+    _request(url, options) {
+        return fetch(url, options).then(this._checkResponse)
+    }
+
     _checkResponse(res) {
         if (res.ok) {
             return res.json()
@@ -12,18 +16,16 @@ export default class Api {
     }
 
     getInitialCards() {
-        return fetch(`${this.url}/cards`, {
+        return this._request(`${this.url}/cards`, {
             headers: this.headers,
         })
-            .then(res => this._checkResponse(res))
     }
 
     deleteCard(cardId) {
-        return fetch(`${this.url}/cards/${cardId}`, {
+        return this._request(`${this.url}/cards/${cardId}`, {
             method: "DELETE",
             headers: this.headers,
         })
-            .then(res => this._checkResponse(res))
     }
 
     changeLikeCardStatus(cardId, isCardLike) {
@@ -36,21 +38,21 @@ export default class Api {
     }
 
     cardLike(cardId) {
-        return fetch(`${this.url}/cards/${cardId}/likes`, {
+        return this._request(`${this.url}/cards/${cardId}/likes`, {
             method: "PUT",
             headers: this.headers,
         })
-            .then(res => this._checkResponse(res))
     }
+
     cardLikeRemove(cardId) {
-        return fetch(`${this.url}/cards/${cardId}/likes`, {
+        return this._request(`${this.url}/cards/${cardId}/likes`, {
             method: "DELETE",
             headers: this.headers,
         })
-            .then(res => this._checkResponse(res))
     }
+
     postCard(item) {
-        return fetch(`${this.url}/cards/`, {
+        return this._request(`${this.url}/cards/`, {
             method: "POST",
             headers: this.headers,
             body: JSON.stringify({
@@ -58,10 +60,10 @@ export default class Api {
                 link: item.link
             })
         })
-            .then(res => this._checkResponse(res))
     }
+
     setProfileInfo(item) {
-        return fetch(`${this.url}/users/me`, {
+        return this._request(`${this.url}/users/me`, {
             method: "PATCH",
             headers: this.headers,
             body: JSON.stringify({
@@ -69,23 +71,22 @@ export default class Api {
                 about: item.about
             })
         })
-            .then(res => this._checkResponse(res))
     }
+
     setProfileAvatar(item) {
-        return fetch(`${this.url}/users/me/avatar`, {
+        return this._request(`${this.url}/users/me/avatar`, {
             method: "PATCH",
             headers: this.headers,
             body: JSON.stringify({
                 avatar: item.avatar,
             })
         })
-            .then(res => this._checkResponse(res))
     }
+
     profileDataInstall() {
-        return fetch(`${this.url}/users/me`, {
+        return this._request(`${this.url}/users/me`, {
             headers: this.headers,
         })
-            .then(res => this._checkResponse(res))
     }
 
 }

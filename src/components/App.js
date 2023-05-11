@@ -9,15 +9,20 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext.js"
 import EditProfilePopup from "./EditProfilePopup.js"
 import EditAvatarPopup from "./EditAvatarPopup.js"
 import AddPlacePopup from "./AddPlacePopup.js"
+import DeleteCardPopup from "./DeleteCardPopup.js"
 
 function App() {
 
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false)
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false)
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false)
+  const [isDeleteCardPopupOpen, setIsDeleteCardPopupOpen] = useState(false)
   const [selectedCard, setSelectedCard] = useState(null)
+  const [deletedCard, setDeletedCard] = useState({})
+  const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || selectedCard
   const [currentUser, setCurrentUser] = useState({})
   const [cards, setCards] = useState([])
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     api.profileDataInstall()
@@ -27,9 +32,7 @@ function App() {
       .catch((error) => {
         console.log(`${error}`);
       })
-  }, [])
 
-  useEffect(() => {
     api.getInitialCards()
       .then((data) => {
         setCards(data)
@@ -38,6 +41,20 @@ function App() {
         console.log(`${error}`);
       })
   }, [])
+
+  // useEffect(() => {
+  //   function closeByEscape(evt) {
+  //     if (evt.key === 'Escape') {
+  //       closeAllPopups();
+  //     }
+  //   }
+  //   if (isOpen) {
+  //     document.addEventListener('keydown', closeByEscape);
+  //     return () => {
+  //       document.removeEventListener('keydown', closeByEscape);
+  //     }
+  //   }
+  // }, [isOpen])
 
 
 
@@ -57,6 +74,11 @@ function App() {
 
   }
 
+  function handleDeleteCardClick(card) {
+    setDeletedCard(card)
+    setIsDeleteCardPopupOpen(!isDeleteCardPopupOpen)
+  }
+
   function handleCardClick(card) {
     setSelectedCard(card)
   }
@@ -65,6 +87,7 @@ function App() {
     setIsEditAvatarPopupOpen(false)
     setIsEditProfilePopupOpen(false)
     setIsAddPlacePopupOpen(false)
+    setIsDeleteCardPopupOpen(false)
     setSelectedCard(null)
   }
 
@@ -80,10 +103,11 @@ function App() {
       });
   }
 
-  function handleCardDelete(card) {
-    api.deleteCard(card._id)
+  function handleCardDelete(deletedCard) {
+    api.deleteCard(deletedCard._id)
       .then(() => {
-        setCards((state) => state.filter((newArr) => newArr !== card))
+        setCards((state) => state.filter((newArr) => newArr !== deletedCard))
+        closeAllPopups()
       })
       .catch((error) => {
         console.log(`${error}`);
@@ -91,6 +115,7 @@ function App() {
   }
 
   function handleUpdateUser(data) {
+    setIsLoading(!isLoading)
     api.setProfileInfo(data)
       .then((data) => {
         setCurrentUser(data)
@@ -98,10 +123,14 @@ function App() {
       })
       .catch((error) => {
         console.log(`${error}`);
-      });
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
   }
 
   function handleUpdateAvatar(data) {
+    setIsLoading(!isLoading)
     api.setProfileAvatar(data)
       .then((data) => {
         setCurrentUser(data)
@@ -109,18 +138,26 @@ function App() {
       })
       .catch((error) => {
         console.log(`${error}`);
-      });
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
   }
 
   function handleAddPlaceSubmit(data) {
+    setIsLoading(!isLoading)
     api.postCard(data)
       .then((data) => {
+        setIsLoading(!isLoading)
         setCards([data, ...cards]);
         closeAllPopups()
       })
       .catch((error) => {
         console.log(`${error}`);
-      });
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
   }
 
   return (
@@ -135,16 +172,15 @@ function App() {
           onCardClick={handleCardClick}
           onCardLike={handleCardLike}
           cards={cards}
-          onCardDelete={handleCardDelete}
+          onCardDelete={handleDeleteCardClick}
         />
         <Footer />
 
-        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateAvatar} />
-        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
-        <ImagePopup card={selectedCard} onClose={closeAllPopups} />
-
-        <PopupWithForm name="delete" title="Вы уверены?" submitTitle={"Да"} />
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} isLoading={isLoading} />
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateAvatar} isLoading={isLoading} />
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} isLoading={isLoading} />
+        <DeleteCardPopup isOpen={isDeleteCardPopupOpen} onClose={closeAllPopups} onDeleteCard={handleCardDelete} card={deletedCard} />
+        <ImagePopup card={selectedCard} onClose={closeAllPopups} isOpen={isOpen} />
 
       </CurrentUserContext.Provider>
 
